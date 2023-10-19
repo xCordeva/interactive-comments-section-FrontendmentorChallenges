@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/interactive-comments-section-FrontendmentorChallenge/static/css/main.8d181543.css",
-    "main.js": "/interactive-comments-section-FrontendmentorChallenge/static/js/main.31af810b.js",
-    "static/media/image-cordeva.png": "/interactive-comments-section-FrontendmentorChallenge/static/media/image-cordeva.f5c98f4c27f31539d71b.png",
-    "index.html": "/interactive-comments-section-FrontendmentorChallenge/index.html",
-    "static/media/icon-plus.svg": "/interactive-comments-section-FrontendmentorChallenge/static/media/icon-plus.0037a825a55096577941.svg",
-    "static/media/icon-edit.svg": "/interactive-comments-section-FrontendmentorChallenge/static/media/icon-edit.b0c7f9ebaec367bd3ae2539df8b55ff9.svg",
-    "static/media/icon-reply.svg": "/interactive-comments-section-FrontendmentorChallenge/static/media/icon-reply.bfb4589d45cd96abd45e3b82f7e7bbc6.svg",
-    "static/media/icon-minus.svg": "/interactive-comments-section-FrontendmentorChallenge/static/media/icon-minus.4aa6933cb1575b3c54fa.svg",
-    "static/media/icon-delete.svg": "/interactive-comments-section-FrontendmentorChallenge/static/media/icon-delete.86cedbf2e37529f9c8f1f744254059b0.svg",
-    "main.8d181543.css.map": "/interactive-comments-section-FrontendmentorChallenge/static/css/main.8d181543.css.map",
-    "main.31af810b.js.map": "/interactive-comments-section-FrontendmentorChallenge/static/js/main.31af810b.js.map"
+    "main.css": "/interactive-comments-section-FrontendmentorChallenges/static/css/main.8d181543.css",
+    "main.js": "/interactive-comments-section-FrontendmentorChallenges/static/js/main.d2922a0e.js",
+    "static/media/image-cordeva.png": "/interactive-comments-section-FrontendmentorChallenges/static/media/image-cordeva.f5c98f4c27f31539d71b.png",
+    "index.html": "/interactive-comments-section-FrontendmentorChallenges/index.html",
+    "static/media/icon-plus.svg": "/interactive-comments-section-FrontendmentorChallenges/static/media/icon-plus.0037a825a55096577941.svg",
+    "static/media/icon-edit.svg": "/interactive-comments-section-FrontendmentorChallenges/static/media/icon-edit.b0c7f9ebaec367bd3ae2539df8b55ff9.svg",
+    "static/media/icon-reply.svg": "/interactive-comments-section-FrontendmentorChallenges/static/media/icon-reply.bfb4589d45cd96abd45e3b82f7e7bbc6.svg",
+    "static/media/icon-minus.svg": "/interactive-comments-section-FrontendmentorChallenges/static/media/icon-minus.4aa6933cb1575b3c54fa.svg",
+    "static/media/icon-delete.svg": "/interactive-comments-section-FrontendmentorChallenges/static/media/icon-delete.86cedbf2e37529f9c8f1f744254059b0.svg",
+    "main.8d181543.css.map": "/interactive-comments-section-FrontendmentorChallenges/static/css/main.8d181543.css.map",
+    "main.d2922a0e.js.map": "/interactive-comments-section-FrontendmentorChallenges/static/js/main.d2922a0e.js.map"
   },
   "entrypoints": [
     "static/css/main.8d181543.css",
-    "static/js/main.31af810b.js"
+    "static/js/main.d2922a0e.js"
   ]
 }
