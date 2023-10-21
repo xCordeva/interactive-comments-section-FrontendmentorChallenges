@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/interactive-comments-section-FrontendmentorChallenges/static/css/main.8d181543.css",
-    "main.js": "/interactive-comments-section-FrontendmentorChallenges/static/js/main.b32bdd0f.js",
+    "main.js": "/interactive-comments-section-FrontendmentorChallenges/static/js/main.ae333bd3.js",
     "static/media/image-cordeva.png": "/interactive-comments-section-FrontendmentorChallenges/static/media/image-cordeva.f5c98f4c27f31539d71b.png",
     "index.html": "/interactive-comments-section-FrontendmentorChallenges/index.html",
     "static/media/icon-plus.svg": "/interactive-comments-section-FrontendmentorChallenges/static/media/icon-plus.0037a825a55096577941.svg",
@@ -10,10 +10,10 @@
     "static/media/icon-minus.svg": "/interactive-comments-section-FrontendmentorChallenges/static/media/icon-minus.4aa6933cb1575b3c54fa.svg",
     "static/media/icon-delete.svg": "/interactive-comments-section-FrontendmentorChallenges/static/media/icon-delete.86cedbf2e37529f9c8f1f744254059b0.svg",
     "main.8d181543.css.map": "/interactive-comments-section-FrontendmentorChallenges/static/css/main.8d181543.css.map",
-    "main.b32bdd0f.js.map": "/interactive-comments-section-FrontendmentorChallenges/static/js/main.b32bdd0f.js.map"
+    "main.ae333bd3.js.map": "/interactive-comments-section-FrontendmentorChallenges/static/js/main.ae333bd3.js.map"
   },
   "entrypoints": [
     "static/css/main.8d181543.css",
-    "static/js/main.b32bdd0f.js"
+    "static/js/main.ae333bd3.js"
   ]
 }
