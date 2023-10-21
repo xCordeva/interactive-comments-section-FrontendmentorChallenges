@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from 'uuid'; // to generate unique ids
+import { doc, setDoc } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 
-
-const SendAReply = ({ currentUser, addNewComment,comment,commentReplyClicked,toggleCommentReplyClick, reply,replyToReply }) => {
+const SendAReply = ({ currentUserData, addNewComment, comment, commentReplyClicked, toggleCommentReplyClick, reply, replyToReply, db}) => {
   const [replyContent, setReplyContent] = useState(replyToReply ? `@${reply.user.username} `: `@${comment.user.username} `);
 
   const handleSubmit = (e) => {
 
     e.preventDefault();
     const newReply = {
-        id: comment.id,
+        
         content: comment.content,
         createdAt: comment.createdAt,
+        id: comment.id,
         score: comment.score,
         user: {
           image: {
@@ -23,29 +25,24 @@ const SendAReply = ({ currentUser, addNewComment,comment,commentReplyClicked,tog
         replies: [...comment.replies ,{
             id: uuidv4(), // Generate a unique ID using uuidv4
             content: replyContent.replace(replyToReply ? `@${reply.user.username} `: `@${comment.user.username} `, ''),
-            createdAt: 'A few seconds ago',
+            createdAt: Timestamp.now(),
             score: 0,
             replyingTo: replyToReply ? reply.user.username : comment.user.username,
             user: {
                 image: {
-                    png: currentUser.image.png,
-                    webp: currentUser.image.webp
+                    png: currentUserData.image.png,
+                    webp: currentUserData.image.webp
                 },
-            username: currentUser.username
+            username: currentUserData.username
         }
         }]
     };
     
-    fetch(`http://localhost:8000/comments/${comment.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newReply),
-    }).then(() => {
-      // After successfully posting a new comment, call the addNewComment function
-      // to trigger a re-fetch of comments.
-      addNewComment();
-    });
-
+    // After successfully posting a new comment, call the addNewComment function
+    // to trigger a re-fetch of comments.
+    addNewComment();
+    const docRef = doc(db, 'comments', comment.id);
+    setDoc(docRef, newReply)
     setReplyContent(`@${comment.user.username} `);
     toggleCommentReplyClick()
   }
@@ -63,7 +60,7 @@ const SendAReply = ({ currentUser, addNewComment,comment,commentReplyClicked,tog
             placeholder='Add a reply...'
           ></textarea>
           <div className="reply-button-photo">
-            <img src={require(`${currentUser.image.png}`)} alt={currentUser.username} />
+            <img src={require(`${currentUserData.image.png}`)} alt={currentUserData.username} />
             <button type="submit">REPLY</button>
           </div>
         </form>
@@ -71,7 +68,7 @@ const SendAReply = ({ currentUser, addNewComment,comment,commentReplyClicked,tog
 
       <div className="desktop">
         <form onSubmit={handleSubmit}>
-          <img src={require(`${currentUser.image.png}`)} alt={currentUser.username} />
+          <img src={require(`${currentUserData.image.png}`)} alt={currentUserData.username} />
           <textarea
             value={replyContent}
             required

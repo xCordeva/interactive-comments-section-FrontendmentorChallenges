@@ -1,38 +1,34 @@
 import { useState } from "react";
+import { doc, setDoc } from 'firebase/firestore';
 
-
-const EditComment = ({ comment, addNewComment , toggleEditClick,reply }) => {
+const EditComment = ({ comment, addNewComment, toggleEditClick, reply, db }) => {
 
     const [content, setContent] = useState(`@${reply.replyingTo} ` + reply.content);
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        const updatedReplies = comment.replies.map((chosenReply) => {
-            if (chosenReply.id === reply.id) {
-              return {
-                ...chosenReply,
-                content: content.replace(`@${reply.replyingTo} `, ''),
-              };
-            }
-            return chosenReply;
-          });
-          
-          const updatedComment = {
-            ...comment,
-            replies: updatedReplies,
-          };
-
-        fetch(`http://localhost:8000/comments/${comment.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedComment),
-        }).then(() => {
-          // trigger a re-fetch of comments
-          addNewComment();
+      e.preventDefault();
+      
+      const updatedReplies = comment.replies.map((chosenReply) => {
+          if (chosenReply.id === reply.id) {
+            return {
+              ...chosenReply,
+              content: content.replace(`@${reply.replyingTo} `, ''),
+            };
+          }
+          return chosenReply;
         });
-        toggleEditClick()
-      }
+        
+        const updatedComment = {
+          ...comment,
+          replies: updatedReplies,
+        };      
+
+
+      const docRef = doc(db, 'comments', comment.id);
+      setDoc(docRef, updatedComment)
+      addNewComment();
+      toggleEditClick()
+    }
 
     return (
         <div className="edit">

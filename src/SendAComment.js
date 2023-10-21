@@ -1,34 +1,43 @@
 import { useState } from "react";
+import { collection, addDoc } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 
-const SendAComment = ({ currentUser, addNewComment,toggleEditClick }) => {
+
+const SendAComment = ({ currentUserData, addNewComment, toggleEditClick,  commentsData, db }) => {
   const [content, setContent] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+
     const newComment = {
       content,
-      createdAt: 'A few seconds ago',
+      createdAt: Timestamp.now(),
+      id: (commentsData.length + 1),
       score: 0,
       user: {
         image: {
-          png: currentUser.image.png,
-          webp: currentUser.image.webp,
+          png: currentUserData.image.png,
+          webp: currentUserData.image.webp,
         },
-        username: currentUser.username,
+        username: currentUserData.username,
       },
       replies: [],
     };
     
-    fetch('http://localhost:8000/comments', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newComment),
-    }).then(() => {
-      // After successfully posting a new comment, call the addNewComment function
-      // to trigger a re-fetch of comments.
-      addNewComment();
-    });
-
+    // fetch('http://localhost:8000/comments', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(newComment),
+    // }).then(() => {
+    //   // After successfully posting a new comment, call the addNewComment function
+    //   // to trigger a re-fetch of comments.
+    //   addNewComment();
+    // });
+    const docRef = collection(db, 'comments');
+    addDoc(docRef, newComment)
+    // to trigger a re-fetch of comments.
+    addNewComment();
     setContent('');
     toggleEditClick()
   }
@@ -45,7 +54,7 @@ const SendAComment = ({ currentUser, addNewComment,toggleEditClick }) => {
             placeholder='Add a comment...'
           ></textarea>
           <div className="reply-button-photo">
-            <img src={require(`${currentUser.image.png}`)} alt={currentUser.username} />
+            <img src={require(`${currentUserData.image.png}`)} alt={currentUserData.username} />
             <button type="submit">SEND</button>
           </div>
         </form>
@@ -59,7 +68,7 @@ const SendAComment = ({ currentUser, addNewComment,toggleEditClick }) => {
             onChange={(e) => setContent(e.target.value)}
             placeholder='Add a comment...'
           ></textarea>
-          <img src={require(`${currentUser.image.png}`)} alt={currentUser.username} />
+          <img src={require(`${currentUserData.image.png}`)} alt={currentUserData.username} />
           <button type="submit">SEND</button>
         </form>
       </div>

@@ -7,9 +7,11 @@ import PermittedVoting from './PermittedVoting'
 import EditReply from './EditReply'
 import SendAReply from './SendAReply'
 import { v4 as uuidv4 } from 'uuid'; // to generate unique ids
+import { doc, setDoc } from 'firebase/firestore';
+import { formatDistanceToNow } from 'date-fns';
 
 
-const Reply = ({comment, currentUser, triggerRefetch, ownVoteHandle}) => {
+const Reply = ({comment, currentUserData, triggerRefetch, ownVoteHandle, db}) => {
 
     const [upvotedComments, setUpvotedComments] = useState(new Set());
     const [downvotedComments, setDownvotedComments] = useState(new Set());
@@ -20,7 +22,7 @@ const Reply = ({comment, currentUser, triggerRefetch, ownVoteHandle}) => {
         const newUpvotedComments = new Set(upvotedComments);
         const newDownvotedComments = new Set(downvotedComments);
     
-        if(reply.user.username === currentUser.username){
+        if(reply.user.username === currentUserData.username){
             ownVoteHandle()
         }
         else if (!newUpvotedComments.has(reply.id)) {
@@ -46,7 +48,7 @@ const Reply = ({comment, currentUser, triggerRefetch, ownVoteHandle}) => {
         const newDownvotedComments = new Set(downvotedComments);
         const newUpvotedComments = new Set(upvotedComments);
 
-        if(reply.user.username === currentUser.username){
+        if(reply.user.username === currentUserData.username){
             ownVoteHandle()
         }
         else if (!newDownvotedComments.has(reply.id)) {
@@ -95,16 +97,12 @@ const Reply = ({comment, currentUser, triggerRefetch, ownVoteHandle}) => {
     }
     
     const handleDelete = (comment)=>{
-        fetch('http://localhost:8000/comments/'+ comment.id , {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(removedReply),
-        }).then(() => {
-            addNewComment();
-            setDeleteClicked(false)
-        });
+        const docRef = doc(db, 'comments', comment.id);
+        setDoc(docRef, removedReply)
+        addNewComment();
+        setDeleteClicked(false)
     }
-
+    
     const [deleteClicked, setDeleteClicked] = useState(false)
     const [commentReplyClicked, setCommentReplyClicked] = useState(false)
     const [deletePopups, setDeletePopups] = useState(null);
@@ -125,6 +123,10 @@ const Reply = ({comment, currentUser, triggerRefetch, ownVoteHandle}) => {
         setEditClicked(false)
     }
     
+    // func to show the live time based on the timestamp thats send with every new comment/reply
+    function formatTimestamp(createdAt) {
+        return formatDistanceToNow(new Date(createdAt.toDate()), { addSuffix: true });
+    }
     return (
         
         <div className="reply-container">
@@ -154,7 +156,7 @@ const Reply = ({comment, currentUser, triggerRefetch, ownVoteHandle}) => {
                                     } onClick={()=>downvote(reply)}>-</p>
                                 </div>
 
-                                {reply.user.username === currentUser.username ?
+                                {reply.user.username === currentUserData.username ?
                                     <div className="current-user-options mobile">
                                         <div className="reply edit" onClick={() => {
                                             setEditClicked(true)
@@ -195,13 +197,13 @@ const Reply = ({comment, currentUser, triggerRefetch, ownVoteHandle}) => {
                                             <img src={require(`${reply.user.image.png}`)} alt="amyrobson" />
                                             <p>{reply.user.username}</p>
 
-                                            {reply.user.username === currentUser.username ? <p className='you-tag'>you</p>: null}
+                                            {reply.user.username === currentUserData.username ? <p className='you-tag'>you</p>: null}
                                             
-                                            <p className='created-at'>{reply.createdAt}</p>
+                                            <p className='created-at'>{formatTimestamp(reply.createdAt)}</p>
                                         </div>
 
 
-                                        {reply.user.username === currentUser.username ?
+                                        {reply.user.username === currentUserData.username ?
                                         <div className="current-user-options desktop">
                                             <div className="reply edit" onClick={() => {
                                                 setEditClicked(true)
@@ -239,7 +241,7 @@ const Reply = ({comment, currentUser, triggerRefetch, ownVoteHandle}) => {
                                     </div>
                                     <div className="comment-body">
                                         {editPopup === reply.id && editClicked ? (
-                                        <EditReply comment={comment} currentUser={currentUser} addNewComment={addNewComment} toggleEditClick={toggleEditClick} reply={reply}/>
+                                        <EditReply comment={comment} addNewComment={addNewComment} toggleEditClick={toggleEditClick} reply={reply} db={db}/>
                                         ) : (
                                             <p><span>@{reply.replyingTo} </span>{reply.content}</p>
                                         )}
@@ -252,7 +254,7 @@ const Reply = ({comment, currentUser, triggerRefetch, ownVoteHandle}) => {
                             
                             {replyPopup === reply.id && 
                                 <div>
-                                    <SendAReply addNewComment={addNewComment} currentUser={currentUser} comment={comment} commentReplyClicked={commentReplyClicked} toggleCommentReplyClick={toggleCommentReplyClick} reply={reply} replyToReply={replyToReply}/>
+                                    <SendAReply addNewComment={addNewComment} currentUserData={currentUserData} comment={comment} commentReplyClicked={commentReplyClicked} toggleCommentReplyClick={toggleCommentReplyClick} reply={reply} replyToReply={replyToReply} db={db}/>
                                 </div>
                             }
                         </div>

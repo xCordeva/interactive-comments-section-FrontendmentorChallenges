@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { doc, setDoc } from 'firebase/firestore';
 
-const EditComment = ({ comment, addNewComment , toggleEditClick }) => {
+
+const EditComment = ({ comment, addNewComment , toggleEditClick, db }) => {
 
     const [content, setContent] = useState(comment.content);
 
@@ -11,18 +13,14 @@ const EditComment = ({ comment, addNewComment , toggleEditClick }) => {
         const editComment = {
           ...comment,
           content,
+          
         };
         
-        fetch(`http://localhost:8000/comments/${comment.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(editComment),
-        }).then(() => {
-          // trigger a re-fetch of comments
-          addNewComment();
-        });
+        const docRef = doc(db, 'comments', comment.id);
+        setDoc(docRef, editComment)
+        addNewComment();
         toggleEditClick()
-      }
+    }
 
     return (
         <div className="edit">

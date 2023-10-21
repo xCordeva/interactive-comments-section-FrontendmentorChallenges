@@ -8,9 +8,12 @@ import Popup from './Popup'
 import SendAReply from './SendAReply'
 import PermittedVoting from './PermittedVoting'
 import EditComment from './EditComment'
+import { doc, deleteDoc } from 'firebase/firestore';
+import { formatDistanceToNow } from 'date-fns';
 
 
-const Comment = ({data, currentUser, triggerRefetch}) => {
+
+const Comment = ({commentsData, currentUserData, triggerRefetch, getComments, db}) => {
 
     //voting vars
     const [upvotedComments, setUpvotedComments] = useState(new Set());
@@ -30,7 +33,7 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
         const newUpvotedComments = new Set(upvotedComments);
         const newDownvotedComments = new Set(downvotedComments);
         
-        if(comment.user.username === currentUser.username){
+        if(comment.user.username === currentUserData.username){
             ownVoteHandle()
         }
         else if (!newUpvotedComments.has(comment.id)) {
@@ -57,7 +60,7 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
         const newDownvotedComments = new Set(downvotedComments);
         const newUpvotedComments = new Set(upvotedComments);
 
-    if(comment.user.username === currentUser.username){
+    if(comment.user.username === currentUserData.username){
         ownVoteHandle()
     }
     else if (!newDownvotedComments.has(comment.id)) {
@@ -86,12 +89,9 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
 
     // func to remove the comments from json server and refreshing the data shown to remove the deleted
     const handleDelete = (comment)=>{
-        fetch('http://localhost:8000/comments/'+ comment.id , {
-        method: 'DELETE'
-        }).then(() => {
-            addNewComment();
-            setDeleteClicked(false)
-        });
+        deleteDoc(doc(db, 'comments', comment.id))
+        addNewComment();
+        setDeleteClicked(false)
     }
 
     // vars and funcs to trigger the events of delete, edit, reply
@@ -112,12 +112,19 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
     const toggleCommentReplyClick = ()=>{
         setCommentReplyClicked(!commentReplyClicked)
     }
+    
+    function formatTimestamp(createdAt) {
+        return formatDistanceToNow(new Date(createdAt.toDate()), { addSuffix: true });
+    }
 
     return (
+        
         <div className="comments">
-            {data.map((comment)=>(
+           
+            {commentsData.map((comment)=>(
+                 
                 <div key={comment.id}>
-                    <div className="comment-container">
+                    <div className="comment-container" >
                         <div className="mobile-comment-footer">
                             <div className="votes-counter">
                                 <p className={
@@ -131,7 +138,7 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
                                     } onClick={()=>downvote(comment)}>-</p>
                             </div>
                             {/* a lot of reused code because iam so lazy to figure out how to style */}
-                            {comment.user.username === currentUser.username ?
+                            {comment.user.username === currentUserData.username ?
                                 
                                 <div className="current-user-options mobile">
                                     
@@ -174,12 +181,12 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
                                     <img src={require(`${comment.user.image.png}`)} alt="amyrobson" />
                                     <p>{comment && comment.user.username}</p>
 
-                                    {comment.user.username === currentUser.username ? <p className='you-tag'>you</p>: null}
-
-                                    <p className='created-at'>{comment.createdAt}</p>
+                                    {comment.user.username === currentUserData.username ? <p className='you-tag'>you</p>: null}
+                                    {}
+                                    <p className='created-at'>{formatTimestamp(comment.createdAt)}</p>
                                 </div>
 
-                                {comment.user.username === currentUser.username ?
+                                {comment.user.username === 'cordeva' ?
                                 
                                 <div className="current-user-options desktop">
                                     
@@ -218,7 +225,7 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
                             </div>
                             <div className="comment-body">
                                 {editPopup === comment.id && editClicked ? (
-                                <EditComment comment={comment} currentUser={currentUser} addNewComment={addNewComment} toggleEditClick={toggleEditClick}/>
+                                <EditComment comment={comment} currentUserData={currentUserData} addNewComment={addNewComment} toggleEditClick={toggleEditClick} db={db}/>
                                 ) : (
                                 <p>{comment.content}</p>
                                 )}
@@ -226,7 +233,7 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
                         </div>
                     </div>
                     {comment.replies.length > 0 && (
-                        <Reply comment={comment} currentUser={currentUser} triggerRefetch={triggerRefetch} ownVoteHandle={ownVoteHandle}/>
+                        <Reply comment={comment} currentUserData={currentUserData} triggerRefetch={triggerRefetch} ownVoteHandle={ownVoteHandle}  db={db}/>
                     )}
 
                     {/* styling the Send a reply differently from seand a comment */}
@@ -237,7 +244,7 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
                         </div>
                         <div className="replies">
                             <div className="right-side" key={comment.id}>
-                                <SendAReply addNewComment={addNewComment} currentUser={currentUser} comment={comment} commentReplyClicked={commentReplyClicked} toggleCommentReplyClick={toggleCommentReplyClick}/>
+                                <SendAReply addNewComment={addNewComment} currentUserData={currentUserData} comment={comment} commentReplyClicked={commentReplyClicked} toggleCommentReplyClick={toggleCommentReplyClick} db={db}/>
                             </div>
                         </div>
                     </div>}
@@ -246,7 +253,7 @@ const Comment = ({data, currentUser, triggerRefetch}) => {
                 
             ))}
             
-            <SendAComment addNewComment={addNewComment} currentUser={currentUser} toggleEditClick={toggleEditClick}/>
+            <SendAComment addNewComment={addNewComment} currentUserData={currentUserData} toggleEditClick={toggleEditClick} commentsData={commentsData} db={db}/>
             {ownVote && <PermittedVoting />}
         </div>
     );
