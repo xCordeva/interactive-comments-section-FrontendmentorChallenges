@@ -81,7 +81,7 @@ I've learned how to conditionally render UI elements based on user interactions 
 
 I've learned how to interact with a backend API to perform operations like adding, editing, and deleting comments.
 
-Firebase and Firestore:
+- Firebase and Firestore:
 This project was my first experience with Firebase and Firestore. I gained a lot of experience in setting up a live database, performing data operations such as adding, editing, and deleting comments, and integrating real-time updates into my web application.
 
 
